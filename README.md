@@ -4,12 +4,12 @@
   </a>
 </p>
 
-# React Native App - Template
+# Basic Calculator App
 
 ## Ejecución
 1. Clonar del repositorio
 ```
-   git clone https://github.com/garySZA/react-native-app-template.git
+   git clone https://github.com/garySZA/calculator.git
 ```
 2. Instalar dependencias
 ```

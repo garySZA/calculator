@@ -1,1 +1,1 @@
-export * from './CounterScreen';
+export * from './CalculatorScreen';
