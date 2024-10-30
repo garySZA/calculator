@@ -1,17 +1,35 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 enum Operator {
-    add,
-    subtract,
-    multiply,
-    divide,
+    add = '+',
+    subtract = '-',
+    multiply = 'x',
+    divide = '÷',
 }
 
 export const useCalculator = () => {
+    const [formula, setFormula] = useState('');
     const [number, setNumber] = useState('0');
     const [prevNumber, setPrevNumber] = useState('0');
 
     const lastOperation = useRef<Operator>();
+
+    useEffect(() => {
+        if( lastOperation.current ){
+            const firstFormulaPart = formula.split( ' ' ).at( 0 );
+
+            setFormula(`${ firstFormulaPart } ${ lastOperation.current } ${ number }`);
+        } else {
+            setFormula( number );
+        }
+    }, [number, formula]);
+
+    useEffect(() => {
+        const subResult = calculateSubResult();
+        setPrevNumber(`${ subResult }`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formula]);
+
 
     const buildNumber = (numberString: string) => {
 
@@ -49,6 +67,8 @@ export const useCalculator = () => {
     const clean = () => {
         setNumber('0');
         setPrevNumber('0');
+        lastOperation.current = undefined;
+        setFormula('');
     };
 
     //* Borra el último número
@@ -79,6 +99,8 @@ export const useCalculator = () => {
     };
 
     const setLastNumber = () => {
+        calculateResult();
+
         if( number.endsWith('.') ){
             setPrevNumber( number.slice(0, -1) );
         } else {
@@ -109,35 +131,42 @@ export const useCalculator = () => {
     };
 
     const calculateResult = () => {
-        const firstNumber = Number( number );
-        const lastNumber = Number( prevNumber );
+        const result = calculateSubResult();
+        setFormula( `${ result }` );
 
-        switch ( lastOperation.current ) {
+        lastOperation.current = undefined;
+        setPrevNumber('0');
+    };
+
+    const calculateSubResult = () => {
+        const [ firstValue, operation, lastValue ] = formula.split( ' ' );
+
+        const firstNumber = Number( firstValue );
+        const lastNumber = Number( lastValue );
+
+        if( isNaN( lastNumber ) ) {return firstNumber;}
+
+        switch ( operation ) {
             case Operator.add:
-                setNumber( `${ firstNumber + lastNumber }` );
-                break;
+                return firstNumber + lastNumber;
 
             case Operator.subtract:
-                setNumber( `${ lastNumber - firstNumber }` );
-                break;
+                return firstNumber - lastNumber;
 
             case Operator.multiply:
-                setNumber( `${ firstNumber * lastNumber }` );
-                break;
+                return firstNumber * lastNumber;
 
             case Operator.divide:
-                setNumber( `${ lastNumber / firstNumber }` );
-                break;
+                return firstNumber / lastNumber;
 
             default:
                 throw new Error('operation not implemented');
         }
-
-        setPrevNumber('0');
     };
 
     return {
         //* Props
+        formula,
         number,
         prevNumber,
 

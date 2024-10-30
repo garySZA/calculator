@@ -13,8 +13,8 @@ export const CalculatorScreen = () => {
         clean,
         deleteOperation,
         divideOperation,
+        formula,
         multiplyOperation,
-        number,
         prevNumber,
         subtractOperation,
         toggleSign,
@@ -28,15 +28,21 @@ export const CalculatorScreen = () => {
                     numberOfLines={ 1 }
                     style={ globalStyles.mainResult }
                 >
-                    { number }
+                    { formula }
                 </Text>
-                <Text
-                    adjustsFontSizeToFit
-                    numberOfLines={ 1 }
-                    style={ globalStyles.subResult }
-                >
-                    { ( prevNumber === '0' ? ' ' : prevNumber ) }
-                </Text>
+                {
+                    (formula === prevNumber)
+                    ?   <Text style={ globalStyles.subResult }> </Text>
+                    : (
+                        <Text
+                            adjustsFontSizeToFit
+                            numberOfLines={ 1 }
+                            style={ globalStyles.subResult }
+                        >
+                            { ( prevNumber === '0' ? ' ' : prevNumber ) }
+                        </Text>
+                    )
+                }
             </View>
 
             <View style={ globalStyles.row }>
